@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td{border:3px solid black;}
+
+</style>
+<title>Backpacking Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"                                            
+   integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+   crossorigin=""/>                                                                                                    <!-- Leaflet的CSS和JS -->
+   <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+   integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+   crossorigin=""></script>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script src= "http://openlayers.org/en/v3.4.0/build/ol.js" type= "text/javascript"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   
+   <script src = "backpacking.js"></script>
+   <script src = "northmain.js"></script>
+   <script src = "south.js"></script>
+   <script src = "connect.js"></script>
+   
+   
+</head>
+
+<body onload = "loadMap()">
+<nav class="navbar navbar-inverse" style=" margin-bottom: 0">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">登山導覽</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">路線<span class="caret"></span></a>
+	   <ul class="dropdown-menu">
+          <li><a href="javascript:loadName1();" target = "name1">奇萊主北</a></li>
+          <li><a href="javascript:loadName2();" target = "name2">奇萊連峰</a></li>
+          <li><a href="javascript:loadName3();" target = "name3">奇萊南華</a></li>
+        </ul>
+      </li>
+      <li><a href="javascript:loadWater();" target = "waterButton">水源</a></li>  <!--之後做與地圖的連結，秀資訊-->
+      <li><a href="javascript:loadCamp();" target = "campButton">營地</a></li>
+    </ul>
+  </div>
+</nav>
+<div id = "map" class = "container" style = "width:60vw; height:100vh; float:right"></div>    <!--佔螢幕百分比用vw和vh，float靠右-->
+<!--山的名稱-->
+<div id = "name" style = "width:506px; height:100px; margin:10px; border-style:soild; background-color:#DDDDDD; line-height:100px; position:relative" align="center" valign="middle">
+</div>
+<!--水源的DIV-->
+<div id = "water" style = "width:506px; height:492px; margin-right:10px; margin-left:10px; border-style:soild; background-color:#DDDDDD; position:absolute">
+	<!--輸入水源資料的DIV-->
+	<div id = "waterOption" style = "margin:10px; display:none">
+		<p>輸入水源:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" id = "waterOption1"></p>
+		<p>輸入是否為活水:<input type = "text" id = "waterOption2"></p>
+		<p>輸入水源描述:&nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" id = "waterOption3"></p>
+		<p nowrap>輸入座標:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" id = "waterOption4">點選地圖取得座標<input type ="button" id = "submit" value = "提交" style = "float:right" onclick = "insertWaterData();"></p>
+		
+	</div>
+	<!--水源資料的table-->
+	<table id = "waterTable1" style = "display:none; poistion:absolute">
+		<tr>
+			<td><font size="3" face = "DFKai-sb">水源名稱</font></td>
+			<td><font size="3" face = "DFKai-sb">是否為活水</font></td>
+			<td><font size="3" face = "DFKai-sb">水源描述</font></td>
+			<td><font size="3" face = "DFKai-sb">座標</font></td>
+		</tr>
+		<tr>
+			<td class = "first">濁水溪源頭</td>
+			<td>活水</td>
+			<td>清澈河流</td>
+			<td>24.1159, 121.3190</td>
+		</tr>
+		<tr>
+			<td class = "second">龍溪</td>
+			<td>活水</td>
+			<td>清澈河流<br>須從稜線山屋下切120公尺</td>
+			<td>24.1085, 121.3289</td>
+		</tr>
+	</table>
+	<table id = "waterTable2" style = "display:none; poistion:absolute">
+		<tr>
+			<td><font size="3" face = "DFKai-sb">水源名稱</font></td>
+			<td><font size="3" face = "DFKai-sb">是否為活水</font></td>
+			<td><font size="3" face = "DFKai-sb">水源描述</font></td>
+			<td><font size="3" face = "DFKai-sb">座標</font></td>
+		</tr>
+		<tr>
+			<td class = "first">濁水溪源頭</td>
+			<td>活水</td>
+			<td>清澈河流</td>
+			<td>24.1159, 121.3190</td>
+		</tr>
+		<tr>
+			<td class = "second">龍溪</td>
+			<td>活水</td>
+			<td>清澈河流<br>須從稜線山屋下切120公尺</td>
+			<td>24.1085, 121.3289</td>
+		</tr>
+		<tr>
+			<td class = "third">塔羅灣溪</td>
+			<td>活水</td>
+			<td>清澈河流<br>乾季可能無活水</td>
+			<td>24.0566, 121.2851</td>
+		</tr>
+		<tr>
+			<td class = "fourth">天池山莊</td>
+			<td>活水</td>
+			<td>山屋乾淨水</td>
+			<td>24.0451, 121.2796</td>
+		</tr>
+		<tr>
+			<td class = "fifth">能高瀑布</td>
+			<td>活水</td>
+			<td>清澈的塔羅灣溪</td>
+			<td>24.0477, 121.2792</td>
+		</tr>
+		<tr>
+			<td class = "sixth">12.9K水源</td>
+			<td>活水</td>
+			<td>清澈的塔羅灣溪</td>
+			<td>24.0480, 121.2769</td>
+		</tr>
+		<tr>
+			<td class = "seventh">雲海保線所</td>
+			<td>活水</td>
+			<td>人工管線乾淨水</td>
+			<td>24.0465, 121.2363</td>
+		</tr>
+	</table>
+	<table id = "waterTable3" style = "display:none; poistion:absolute">
+		<tr>
+			<td><font size="3" face = "DFKai-sb">水源名稱</font></td>
+			<td><font size="3" face = "DFKai-sb">是否為活水</font></td>
+			<td><font size="3" face = "DFKai-sb">水源描述</font></td>
+			<td><font size="3" face = "DFKai-sb">座標</font></td>
+		</tr>
+		<tr>
+			<td class = "third">塔羅灣溪</td>
+			<td>活水</td>
+			<td>清澈河流<br>乾季可能無活水</td>
+			<td>24.0566, 121.2851</td>
+		</tr>
+		<tr>
+			<td class = "fourth">天池山莊</td>
+			<td>活水</td>
+			<td>山屋乾淨水</td>
+			<td>24.0451, 121.2796</td>
+		</tr>
+		<tr>
+			<td class = "fifth">能高瀑布</td>
+			<td>活水</td>
+			<td>清澈的塔羅灣溪</td>
+			<td>24.0477, 121.2792</td>
+		</tr>
+		<tr>
+			<td class = "sixth">12.9K水源</td>
+			<td>活水</td>
+			<td>清澈的塔羅灣溪</td>
+			<td>24.0480, 121.2769</td>
+		</tr>
+		<tr>
+			<td class = "seventh">雲海保線所</td>
+			<td>活水</td>
+			<td>人工管線乾淨水</td>
+			<td>24.0465, 121.2363</td>
+		</tr>
+	</table>
+</div>
+<!--營地的DIV-->
+<div id = "camp" style = "width:506px; height:492px; margin-right:10px; margin-left:10px; border-style:soild; background-color:#DDDDDD; position:absolute">
+	<!--輸入營地資料的DIV-->
+	<div id = "campOption" style = "margin:10px; display:none">
+		<p>輸入營地:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" id = "campOption1"></p>
+		<p>輸入容納人數:&nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" id = "campOption2"></p>
+		<p>輸入營地描述:&nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" id = "campOption3"></p>
+		<p>輸入座標:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" id = "campOption4"><input type ="button" id = "submit" value = "提交" style = "float:right" onclick = "insertCampData();"></p>
+		
+	</div>
+	<!--營地資料的table-->
+	<table id = "campTable1" style = "display:none; poistion:absolute">
+		<tr>
+			<td><font size="3" face = "DFKai-sb">營地名稱</font></td>
+			<td><font size="3" face = "DFKai-sb">容納人數</font></td>
+			<td><font size="3" face = "DFKai-sb">營地描述</font></td>
+			<td><font size="3" face = "DFKai-sb">座標</font></td>
+		</tr>
+		<tr>
+			<td class = "one">黑水塘山屋</td>
+			<td>10</td>
+			<td>稍微破舊、髒亂</td>
+			<td>24.1207, 121.3120</td>
+		</tr>
+		<tr>
+			<td class = "two">成功山屋<br>成功二號堡</td>
+			<td>34 + 10</td>
+			<td>成功山屋乾淨，床鋪有軟墊<br>成功二號堡需自備睡墊</td>
+			<td>24.1161, 121.3186</td>
+		</tr>
+		<tr>
+			<td class = "eight">成功一號堡</td>
+			<td>10</td>
+			<td>需自備睡墊<br>且時有靈異傳聞</td>
+			<td>24.1143, 121.3208</td>
+		</tr>
+		<tr>
+			<td class = "three">稜線山屋<br>山屋旁營地</td>
+			<td>8 + 4T*4</td>
+			<td>稜線山屋乾淨但小，床鋪有軟墊<br>山屋旁空地均可紮營</td>
+			<td>24.1087, 121.3270</td>
+		</tr>
+	</table>
+	<table id = "campTable2" style = "display:none; poistion:absolute">
+		<tr>
+			<td><font size="3" face = "DFKai-sb">營地名稱</font></td>
+			<td><font size="3" face = "DFKai-sb">容納人數</font></td>
+			<td><font size="3" face = "DFKai-sb">營地描述</font></td>
+			<td><font size="3" face = "DFKai-sb">座標</font></td>
+		</tr>
+		<tr>
+			<td class = "one">黑水塘山屋</td>
+			<td>10</td>
+			<td>稍微破舊、髒亂</td>
+			<td>24.1207, 121.3120</td>
+		</tr>
+		<tr>
+			<td class = "two">成功山屋<br>成功二號堡</td>
+			<td>34 + 10</td>
+			<td>成功山屋乾淨，床鋪有軟墊<br>成功二號堡需自備睡墊</td>
+			<td>24.1161, 121.3186</td>
+		</tr>
+		<tr>
+			<td class = "eight">成功一號堡</td>
+			<td>10</td>
+			<td>需自備睡墊<br>且時有靈異傳聞</td>
+			<td>24.1143, 121.3208</td>
+		</tr>
+		<tr>
+			<td class = "three">稜線山屋<br>山屋旁營地</td>
+			<td>8 + 4T*4</td>
+			<td>稜線山屋乾淨但小，床鋪有軟墊<br>山屋旁空地均可紮營</td>
+			<td>24.1087, 121.3270</td>
+		</tr>
+		<tr>
+			<td class = "four">奇萊南峰岔口營地</td>
+			<td>4T*2</td>
+			<td>空間小，建議搭雨布比較方便</td>
+			<td>24.0567, 121.2850</td>
+		</tr>
+		<tr>
+			<td class = "five">天池停機坪</td>
+			<td>4T*8</td>
+			<td>不避風，小心低窪處積水</td>
+			<td>24.0506, 121.2841</td>
+		</tr>
+		<tr>
+			<td class = "six">天池山莊</td>
+			<td>100</td>
+			<td>全台最高級的山屋</td>
+			<td>24.0454, 121.2796</td>
+		</tr>
+		<tr>
+			<td class = "seven">雲海保線所</td>
+			<td>4T*8</td>
+			<td>保線所前空地可以紮營</td>
+			<td>24.0467, 121.2363</td>
+		</tr>
+	</table>
+	<table id = "campTable3" style = "display:none; poistion:absolute">
+		<tr>
+			<td><font size="3" face = "DFKai-sb">營地名稱</font></td>
+			<td><font size="3" face = "DFKai-sb">容納人數</font></td>
+			<td><font size="3" face = "DFKai-sb">營地描述</font></td>
+			<td><font size="3" face = "DFKai-sb">座標</font></td>
+		</tr>
+		<tr>
+			<td class = "four">奇萊南峰岔口營地</td>
+			<td>4T*2</td>
+			<td>空間小，建議搭雨布比較方便</td>
+			<td>24.0567, 121.2850</td>
+		</tr>
+		<tr>
+			<td class = "five">天池停機坪</td>
+			<td>4T*8</td>
+			<td>不避風，小心低窪處積水</td>
+			<td>24.0506, 121.2841</td>
+		</tr>
+		<tr>
+			<td class = "six">天池山莊</td>
+			<td>100</td>
+			<td>全台最高級的山屋</td>
+			<td>24.0454, 121.2796</td>
+		</tr>
+		<tr>
+			<td class = "seven">雲海保線所</td>
+			<td>4T*8</td>
+			<td>保線所前空地可以紮營</td>
+			<td>24.0467, 121.2363</td>
+		</tr>
+	</table>
+</div>
+<div id = "nothing" style = "width:506px; height:492px; margin-right:10px; margin-left:10px; border-style:soild; background-color:#DDDDDD; position:absolute">
+</body>
+</html>
